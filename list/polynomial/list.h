@@ -12,13 +12,9 @@ struct _node {
     struct _node *next;
 };
 
-struct _head {
-    struct _node *next;
-};
-
 
 typedef struct _node node_t;
-typedef struct _head list_t;
+typedef node_t list_t;
 
 
 /* list函数声明 */
@@ -34,7 +30,6 @@ int list_len(list_t *);
 void list_append(list_t *, int);
 void list_insert(list_t *, int, int);
 int list_get(list_t *, int);
-list_t *list_insertion_sort(list_t *list);
 
 void list_del_node(list_t *, int);
 void free_list(list_t *);

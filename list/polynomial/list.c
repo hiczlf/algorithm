@@ -8,17 +8,19 @@
 list_t *list_init(int array[], int size)
 {
     int index;
+    list_t *list;
     node_t *node, *next_node;
-    list_t *list = malloc(sizeof(list_t));
-    list->next = NULL;
 
-    for (index=0; index < size; index++) {
+    if (size == 0) {
+        return NULL;
+    }
+
+    node = create_node(array[0]);
+    list = node;
+
+    for (index=1; index < size; index++) {
         next_node = create_node(array[index]);
-        if (index == 0) {
-            list->next = next_node;
-        } else {
-            node->next = next_node;
-        }
+        node->next = next_node;
         node = next_node;
     }
 
@@ -49,32 +51,24 @@ void list_append(list_t *list, int value)
 {
     node_t *last_node, *node_append;
 
+    last_node = list_get_node(list, list_len(list)- 1);
     node_append = create_node(value);
-
-    if (list_len(list) == 0) {
-        list->next = node_append;
-    } else {
-        last_node = list_get_node(list, list_len(list)- 1);
-        last_node->next = node_append;
-    }
-
+    last_node->next = node_append;
 }
 
 /* 打印列表 */
 void print_list(list_t *list)
 {
-    node_t *node_iter = list->next;
-
+    node_t *node_iter = list;
     printf("[");
-     while(node_iter != NULL) {
+    while (node_iter != NULL) {
         if (node_iter->next == NULL) {
-            printf("%d", node_iter->value);
+            printf("%d]\n", node_iter->value);
         } else {
             printf("%d, ", node_iter->value);
         }
         node_iter = node_iter->next;
     }
-    printf("]\n");
 }
 
 /* 得出列表长度 */
@@ -82,7 +76,7 @@ int list_len(list_t *list)
 {
     int index = 0;
     node_t *node_iter;
-    node_iter = list->next;
+    node_iter = list;
 
     while(node_iter != NULL) {
         node_iter = node_iter->next;
@@ -97,15 +91,15 @@ void list_insert(list_t *list, int index, int value)
 {
     node_t *node_inserted, *prev_node;
 
+    prev_node = list_get_prev_node(list, index);
     node_inserted = create_node(value);
 
     /* 插入到索引0处 */
-    if (index == 0) {
-        node_inserted->next = list->next;
+    if (prev_node == NULL) {
+        swap_node(list, node_inserted);
         list->next = node_inserted;
     /* 插入到其他地方 */
     } else {
-        prev_node = list_get_prev_node(list, index);
         node_inserted->next = prev_node->next;
         prev_node->next=node_inserted;
     }
@@ -124,7 +118,7 @@ int list_get(list_t *list, int index)
 node_t *list_get_node(list_t *list, int index)
 {
     int i = 0;
-    node_t *node = list->next;
+    node_t *node = list;
     while (i < index && node != NULL) {
         node = node ->next;
         i++;
@@ -153,21 +147,23 @@ void list_del_node(list_t *list, int index)
 {
     node_t *node, *prev_node;
     node = list_get_node(list, index);
-    if (index == 0) {
-        list->next = node->next;
+    prev_node = list_get_prev_node(list, index);
+    /* 删除第一个元素 */
+    if (prev_node == NULL) {
+        swap_node(node, node->next);
+        free(node->next);
+    /* 删除其他元素 */
     } else {
-        prev_node = list_get_prev_node(list, index);
         prev_node->next = node->next;
+        free(node);
     }
-    free(node);
 }
 
 /* 删除整个列表 */
 void free_list(list_t *list)
 {
     node_t *node, *next_node;
-    node = list->next;
-    free(list);
+    node = list;
 
     while (node != NULL) {
         next_node = node->next;
@@ -176,55 +172,18 @@ void free_list(list_t *list)
     }
 }
 
-/* 使用插入排序对列表进行排序 */
-void list_sort(list_t *list)
-{
-    int index;
-    node_t *prev_node;
-    node_t  *next_sort_node, *current_sort_node, *sorted_node;
-
-    current_sort_node = list->next;
-    while (current_sort_node != NULL){
-
-        next_sort_node = current_sort_node->next;
-        sorted_node = list->next;;
-        index = 0;
-        while (sorted_node != NULL) {
-            if (current_sort_node->value < sorted_node->value) {
-                if (index == 0) {
-                    current_sort_node->next = NULL;
-                    list->next = current_sort_node;
-                } else{
-                    prev_node = list_get_prev_node(list, index);
-                    prev_node->next = current_sort_node;
-                    current_sort_node->next = sorted_node;
-                }
-                break;
-
-            }
-            index++;
-            if (sorted_node->next == NULL) {
-                sorted_node->next = current_sort_node;
-                current_sort_node->next = NULL;
-                break;
-            } else {
-                sorted_node = sorted_node->next;
-            }
-        }
-        current_sort_node = next_sort_node;
-    }
-}
-
 
 int main(void) {
     list_t *ids;
-    int values[] = {1, 9, 3};
-    ids = list_init(values, 3);
-    list_append(ids, 0);
-    /* ids = list_sort(ids); */
+    int values[] = {1, 2, 4, 5, 9};
+    ids = list_init(values, 5);
     print_list(ids);
     printf("The length of list is %d\n", list_len(ids));
-    list_sort(ids);
+    list_append(ids, 100);
+    list_insert(ids, 1, 0);
     print_list(ids);
-    /* free_list(ids); */
+    printf("The length of list is %d\n", list_len(ids));
+    list_del_node(ids, 1);
+    print_list(ids);
+    free_list(ids);
 }
