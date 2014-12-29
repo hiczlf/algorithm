@@ -15,9 +15,12 @@ struct _node {
     struct _node *previous;
 };
 
+struct _head {
+    struct _node *next;
+};
 
 typedef struct _node node_t;
-typedef node_t list_t;
+typedef struct _head list_t;
 
 
 /* list函数声明 */

@@ -214,13 +214,20 @@ void list_sort(list_t *list)
 }
 
 
-int main(void) {
+int main(int argc, char **argv) {
+
+    int i;
     list_t *ids;
-    int values[] = {1, 2, -4, 8, 99, 0};
+    int values[argc-1];
+
+    printf("Usage: %s int int int ...\n", argv[0]);
+    for (i = 1; i < argc; i++) {
+        values[i-1] = atoi(argv[i]);
+    }
+
     ids = list_init(values, (sizeof(values) / sizeof(values[0])));
-    /* list_append(ids, -7);
-    list_append(ids, -6); */
-    /* ids = list_sort(ids); */
+    list_insert(ids, 0, -6);
+    list_sort(ids);
     print_list(ids);
     printf("The length of list is %d\n", list_len(ids));
     list_sort(ids);
