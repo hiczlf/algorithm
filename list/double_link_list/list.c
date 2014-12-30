@@ -188,37 +188,44 @@ void free_list(list_t *list)
 /* 使用插入排序对列表进行排序 */
 void list_sort(list_t *list)
 {
-    node_t *sorted_pre, *sorted;
-    node_t *unsorted_pre, *unsorted;
+    node_t  *sorted;
+    node_t  *unsorted, *unsorted_next;
 
     unsorted = list->next;
     while (unsorted != NULL){
-
-        sorted = list->next;
-        sorted_pre = NULL;
-        while ((unsorted->value >= sorted->value) && \
-                (sorted != unsorted)) {
-            sorted_pre = sorted;
-            sorted = sorted->next;
+        print_list(list);
+        sorted = unsorted->previous;
+        unsorted_next = unsorted->next;
+        while ((sorted != NULL) && (unsorted->value < sorted->value)) {
+            sorted = sorted->previous;
 
         }
 
         /* 当前排序元素满足当前顺序，则进行下一个元素 */
-        if (sorted == unsorted) {
-            unsorted_pre = unsorted;
+        if (sorted == unsorted->previous) {
             unsorted = unsorted->next;
             continue;
         }
+        if (unsorted->previous != NULL) {
+            unsorted->previous->next = unsorted->next;
+        }
 
-        unsorted_pre->next = unsorted->next;
-        unsorted->next = sorted;
+        if (unsorted->next != NULL) {
+            unsorted->next->previous = unsorted->previous;
+        }
         /* 在链表头部插入 */
-        if (sorted_pre == NULL){
+        if (sorted == NULL){
+            unsorted->next = list->next;
+            unsorted->previous = NULL;
+            list->next->previous = unsorted;
             list->next = unsorted;
         } else {
-            sorted_pre->next = unsorted;
+            unsorted->next = sorted->next;
+            unsorted->previous = sorted;
+            sorted->next->previous = unsorted;
+            sorted->next = unsorted;
         }
-        unsorted = unsorted_pre->next;
+        unsorted = unsorted_next;
     }
 }
 
@@ -235,11 +242,13 @@ int main(int argc, char **argv) {
     }
 
     ids = list_init(values, sizeof(values)/sizeof(values[0]));
-    print_list(ids);
-    printf("The length of list is %d\n", list_len(ids));
-    list_insert(ids, 0, 0);
-    print_list(ids);
+    /* print_list(ids);                                           */
+    /* printf("The length of list is %d\n", list_len(ids));       */
+    /* list_insert(ids, 0, 0);                                    */
+    /* print_list(ids);                                           */
+    /* print_list(ids); */
     list_sort(ids);
     print_list(ids);
+    printf("The length of list is %d\n", list_len(ids));
     free_list(ids);
 }
