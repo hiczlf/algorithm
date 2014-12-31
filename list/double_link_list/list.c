@@ -193,7 +193,6 @@ void list_sort(list_t *list)
 
     unsorted = list->next;
     while (unsorted != NULL){
-        print_list(list);
         sorted = unsorted->previous;
         unsorted_next = unsorted->next;
         while ((sorted != NULL) && (unsorted->value < sorted->value)) {

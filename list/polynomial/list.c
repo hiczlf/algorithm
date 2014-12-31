@@ -8,19 +8,17 @@
 list_t *list_init(int array[], int size)
 {
     int index;
-    list_t *list;
     node_t *node, *next_node;
+    list_t *list = malloc(sizeof(list_t));
+    list->next = NULL;
 
-    if (size == 0) {
-        return NULL;
-    }
-
-    node = create_node(array[0]);
-    list = node;
-
-    for (index=1; index < size; index++) {
+    for (index=0; index < size; index++) {
         next_node = create_node(array[index]);
-        node->next = next_node;
+        if (index == 0) {
+            list->next = next_node;
+        } else {
+            node->next = next_node;
+        }
         node = next_node;
     }
 
@@ -51,24 +49,32 @@ void list_append(list_t *list, int value)
 {
     node_t *last_node, *node_append;
 
-    last_node = list_get_node(list, list_len(list)- 1);
     node_append = create_node(value);
-    last_node->next = node_append;
+
+    if (list_len(list) == 0) {
+        list->next = node_append;
+    } else {
+        last_node = list_get_node(list, list_len(list)- 1);
+        last_node->next = node_append;
+    }
+
 }
 
 /* 打印列表 */
 void print_list(list_t *list)
 {
-    node_t *node_iter = list;
+    node_t *node_iter = list->next;
+
     printf("[");
-    while (node_iter != NULL) {
+     while(node_iter != NULL) {
         if (node_iter->next == NULL) {
-            printf("%d]\n", node_iter->value);
+            printf("%d", node_iter->value);
         } else {
             printf("%d, ", node_iter->value);
         }
         node_iter = node_iter->next;
     }
+    printf("]\n");
 }
 
 /* 得出列表长度 */
@@ -76,7 +82,7 @@ int list_len(list_t *list)
 {
     int index = 0;
     node_t *node_iter;
-    node_iter = list;
+    node_iter = list->next;
 
     while(node_iter != NULL) {
         node_iter = node_iter->next;
@@ -91,15 +97,15 @@ void list_insert(list_t *list, int index, int value)
 {
     node_t *node_inserted, *prev_node;
 
-    prev_node = list_get_prev_node(list, index);
     node_inserted = create_node(value);
 
     /* 插入到索引0处 */
-    if (prev_node == NULL) {
-        swap_node(list, node_inserted);
+    if (index == 0) {
+        node_inserted->next = list->next;
         list->next = node_inserted;
     /* 插入到其他地方 */
     } else {
+        prev_node = list_get_prev_node(list, index);
         node_inserted->next = prev_node->next;
         prev_node->next=node_inserted;
     }
@@ -118,7 +124,7 @@ int list_get(list_t *list, int index)
 node_t *list_get_node(list_t *list, int index)
 {
     int i = 0;
-    node_t *node = list;
+    node_t *node = list->next;
     while (i < index && node != NULL) {
         node = node ->next;
         i++;
@@ -147,23 +153,21 @@ void list_del_node(list_t *list, int index)
 {
     node_t *node, *prev_node;
     node = list_get_node(list, index);
-    prev_node = list_get_prev_node(list, index);
-    /* 删除第一个元素 */
-    if (prev_node == NULL) {
-        swap_node(node, node->next);
-        free(node->next);
-    /* 删除其他元素 */
+    if (index == 0) {
+        list->next = node->next;
     } else {
+        prev_node = list_get_prev_node(list, index);
         prev_node->next = node->next;
-        free(node);
     }
+    free(node);
 }
 
 /* 删除整个列表 */
 void free_list(list_t *list)
 {
     node_t *node, *next_node;
-    node = list;
+    node = list->next;
+    free(list);
 
     while (node != NULL) {
         next_node = node->next;
@@ -172,18 +176,39 @@ void free_list(list_t *list)
     }
 }
 
+/* 使用插入排序对列表进行排序 */
+void list_sort(list_t *list)
+{
+    node_t *sorted_pre, *sorted;
+    node_t *unsorted_pre, *unsorted;
 
-int main(void) {
-    list_t *ids;
-    int values[] = {1, 2, 4, 5, 9};
-    ids = list_init(values, 5);
-    print_list(ids);
-    printf("The length of list is %d\n", list_len(ids));
-    list_append(ids, 100);
-    list_insert(ids, 1, 0);
-    print_list(ids);
-    printf("The length of list is %d\n", list_len(ids));
-    list_del_node(ids, 1);
-    print_list(ids);
-    free_list(ids);
+    unsorted = list->next;
+    while (unsorted != NULL){
+
+        sorted = list->next;
+        sorted_pre = NULL;
+        while ((unsorted->value >= sorted->value) && \
+                (sorted != unsorted)) {
+            sorted_pre = sorted;
+            sorted = sorted->next;
+
+        }
+
+        /* 当前排序元素满足当前顺序，则进行下一个元素 */
+        if (sorted == unsorted) {
+            unsorted_pre = unsorted;
+            unsorted = unsorted->next;
+            continue;
+        }
+
+        unsorted_pre->next = unsorted->next;
+        unsorted->next = sorted;
+        /* 在链表头部插入 */
+        if (sorted_pre == NULL){
+            list->next = unsorted;
+        } else {
+            sorted_pre->next = unsorted;
+        }
+        unsorted = unsorted_pre->next;
+    }
 }
