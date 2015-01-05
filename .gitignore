@@ -1,7 +1,7 @@
-*.o
-*.o.*
-*.s
-*.a
-*.so
-*.elf
-*.out
+*
+!*.c
+!*.h
+!*.md
+!Makefile
+
+
