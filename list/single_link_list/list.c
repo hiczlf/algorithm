@@ -8,20 +8,22 @@
 list_t *list_init(int array[], int size)
 {
     int index;
-    node_t *node, *next_node;
+    node_t *node_prev, *node_next = NULL;
     list_t *list = malloc(sizeof(list_t));
     list->next = NULL;
+    list->tail = NULL;
 
     for (index=0; index < size; index++) {
-        next_node = create_node(array[index]);
+        node_next = create_node(array[index]);
         if (index == 0) {
-            list->next = next_node;
+            list->next = node_next;
         } else {
-            node->next = next_node;
+            node_prev->next = node_next;
         }
-        node = next_node;
+        node_prev = node_next;
     }
 
+    list->tail = node_next;
     return list;
 }
 
@@ -43,19 +45,19 @@ void swap_node(node_t *prev_node, node_t *next_node)
     *next_node = tmp_node;
 }
 
-
 /* 在列表末尾添加元素 */
 void list_append(list_t *list, int value)
 {
-    node_t *last_node, *node_append;
+    node_t *node_append;
 
     node_append = create_node(value);
 
-    if (list_len(list) == 0) {
+    if (list->next == NULL) {
         list->next = node_append;
+        list->tail = node_append;
     } else {
-        last_node = list_get_node(list, list_len(list)- 1);
-        last_node->next = node_append;
+        list->tail->next = node_append;
+        list->tail = list->tail->next;
     }
 
 }
@@ -153,14 +155,35 @@ void list_del_node(list_t *list, int index)
 {
     node_t *node, *prev_node;
     node = list_get_node(list, index);
+
     if (index == 0) {
         list->next = node->next;
     } else {
         prev_node = list_get_prev_node(list, index);
         prev_node->next = node->next;
     }
+
+    if (node == list->tail) {
+        list->tail = prev_node;
+    }
     free(node);
 }
+
+int list_abs_max(list_t *list)
+{
+    int value, max;
+    node_t *node = list->next;
+
+    while (node != NULL) {
+        value = abs(node->value);
+        if (value > max) {
+            max = value;
+        }
+        node = node->next;
+    }
+    return max;
+}
+
 
 /* 删除整个列表 */
 void free_list(list_t *list)
@@ -214,7 +237,8 @@ void list_sort(list_t *list)
 }
 
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 
     int i;
     list_t *ids;
@@ -226,12 +250,9 @@ int main(int argc, char **argv) {
     }
 
     ids = list_init(values, (sizeof(values) / sizeof(values[0])));
-    list_insert(ids, 0, -6);
-    list_sort(ids);
     print_list(ids);
-    printf("The length of list is %d\n", list_len(ids));
-    list_sort(ids);
-    print_list(ids);
-    printf("The length of list is %d\n", list_len(ids));
-    /* free_list(ids); */
+    printf("The length of list is: %d\n", list_len(ids));
+    free_list(ids);
+    exit(0);
 }
+
