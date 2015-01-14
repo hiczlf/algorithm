@@ -1,7 +1,11 @@
 
 CC=gcc
 
-CFLAGS=-Wall
+STD=-std=c99 -pedantic
+WARN=-Wall
+DEBUG=-g -ggdb
+CFLAGS=$(STD) $(WARN) $(DEBUG)
+
 
 all: radix
 
