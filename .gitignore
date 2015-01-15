@@ -3,5 +3,6 @@
 !*.h
 !*.md
 !Makefile
+!*/
 
 
