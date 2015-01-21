@@ -9,6 +9,6 @@ CFLAGS=$(STD) $(WARN) $(DEBUG)
 
 all: cursor
 
-radix: cursor.c cursor.h
-	$(CC) $(CFLAGS) radix.c -o $@
+cursor: cursor.c cursor.h
+	$(CC) $(CFLAGS) cursor.c -o $@
 
