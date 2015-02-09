@@ -115,7 +115,6 @@ int main(int argc, char **argv)
             push(number_stack, number);
         /* 否则认为是运算符, 进行计算 */
         } else {
-            printf("operator is %s\n", token);
             result = calc(number_stack, token[0]);
         }
         token = strtok(NULL, " ");

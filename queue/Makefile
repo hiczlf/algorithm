@@ -7,8 +7,8 @@ DEBUG=-g -ggdb
 CFLAGS=$(STD) $(WARN) $(DEBUG)
 
 
-all: postfix
+all: queue
 
-stack: postfix.c
-	$(CC) $(CFLAGS) postfix.c -o $@
+queue: queue.c
+	$(CC) $(CFLAGS) queue.c -o $@
 
