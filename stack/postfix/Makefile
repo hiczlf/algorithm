@@ -7,8 +7,8 @@ DEBUG=-g -ggdb
 CFLAGS=$(STD) $(WARN) $(DEBUG)
 
 
-all: parser
+all: stack
 
-parser: parser.c
-	$(CC) $(CFLAGS) parser.c -o $@
+stack: stack.c
+	$(CC) $(CFLAGS) stack.c -o $@
 
