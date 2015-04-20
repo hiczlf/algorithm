@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "stack.h"
+#include "log.h"
 
 struct stack_t *stack_init() {
     struct stack_t *stack = malloc(sizeof(struct stack_t));
@@ -16,14 +17,23 @@ struct stack_node_t *create_stack_node(stack_elem_t value) {
     return new_node;
 }
 
-void push(stack_elem_t value, struct stack_t *stack) {
+void stack_push(stack_elem_t value, struct stack_t *stack) {
     struct stack_node_t *new_node = create_stack_node(value);
     new_node->next = stack->top;
     stack->top = new_node;
     return;
 }
 
-stack_elem_t pop(struct stack_t *stack) {
+stack_elem_t stack_head(struct stack_t *stack) {
+    if (stack->top == NULL) {
+        LOG_ERROR("Empty set won't have head\n");
+        exit(1);
+    } else {
+        return stack->top->value;
+    }
+}
+
+stack_elem_t stack_pop(struct stack_t *stack) {
     stack_elem_t pop_value;
     struct stack_node_t *pop_node;
 
@@ -42,19 +52,44 @@ void print_stack(struct stack_t *stack) {
     printf("[");
     while(node != NULL) {
        if (node->next == NULL) {
-           printf("%d", node->value);
+           printf("%c", node->value);
        } else {
-           printf("%d, ", node->value);
+           printf("%c, ", node->value);
        }
        node = node->next;
     }
     printf("]\n");
 }
 
-bool is_empty(struct stack_t *stack) {
-    if (stack == NULL) {
+bool stack_is_empty(struct stack_t *stack) {
+    if (stack->top == NULL) {
         return 1;
     } else {
         return 0;
     }
 }
+
+int stack_length(struct stack_t *stack) {
+    unsigned int length = 0;
+    struct stack_node_t *node;
+    node = stack->top;
+    while (node != NULL) {
+        length++;
+        node = node->next;
+    }
+    return length;
+}
+
+void *free_stack(struct stack_t * stack) {
+    struct stack_node_t *node, *node_next;
+    node = stack->top;
+    while (node != NULL) {
+        node_next = node->next;
+        free(node);
+        node = node_next;
+    }
+    free(stack);
+    return stack;
+}
+
+

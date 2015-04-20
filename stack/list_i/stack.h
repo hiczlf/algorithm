@@ -4,7 +4,7 @@
 
 #define _STACK_H
 
-typedef int stack_elem_t;
+typedef char stack_elem_t;
 
 struct stack_node_t {
     stack_elem_t value;
@@ -18,9 +18,12 @@ struct stack_t {
 
 struct stack_t *stack_init();
 struct stack_node_t *create_stack_node(stack_elem_t value);
-void push(stack_elem_t value, struct stack_t *stack);
-stack_elem_t pop(struct stack_t *stack);
+void stack_push(stack_elem_t value, struct stack_t *stack);
+stack_elem_t stack_pop(struct stack_t *stack);
+stack_elem_t stack_head(struct stack_t *stack);
 void print_stack(struct stack_t *stack);
-bool is_empty(struct stack_t *stack);
+bool stack_is_empty(struct stack_t *stack);
+int stack_length(struct stack_t *stack);
+void *free_stack(struct stack_t *stack);
 
 #endif
