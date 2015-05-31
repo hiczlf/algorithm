@@ -21,4 +21,12 @@ struct avl_node_t *double_rotate_right(struct avl_node_t *);
 
 int height(struct avl_node_t *);
 
+struct avl_node_t *find_max(struct avl_node_t *);
+struct avl_node_t *find_min(struct avl_node_t *);
+
+struct avl_node_t *delete(struct avl_node_t *, int);
+void avl_free(struct avl_node_t *);
+
+void avl_print(struct avl_node_t *);
+
 #endif
