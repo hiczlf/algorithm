@@ -47,6 +47,7 @@ struct hash_t *hash_init(int table_size)
     struct hash_t *hash = malloc(sizeof(struct hash_t));
     if (table_size < MIN_TABLE_SIZE)  {
         LOG_ERROR("Error: Too small hash table size\n");
+        exit(1);
     }
 
     hash->size = get_next_prime(table_size);
@@ -55,6 +56,7 @@ struct hash_t *hash_init(int table_size)
         hash->hash_table[i] = malloc(sizeof(struct list_t));
         if (hash->hash_table[i] == NULL) {
             LOG_ERROR("Error: Out of space");
+            exit(1);
         } else {
             hash->hash_table[i]->next = NULL;
         }
@@ -90,6 +92,7 @@ void hash_insert(element_t value, struct hash_t *hash) {
             position->next = new_node;
         } else {
             LOG_ERROR("Error: Out of space!\n");
+            exit(1);
         }
     }
 }
