@@ -27,6 +27,14 @@ list_t *list_init(int array[], int size)
     return list;
 }
 
+list_t *list_init_head()
+{
+    list_t *list = malloc(sizeof(list_t));
+    list->next = NULL;
+    list->tail = NULL;
+    return list;
+}
+
 /* 创建一个列表节点 */
 node_t *create_node(int value)
 {
@@ -111,6 +119,19 @@ void list_insert(list_t *list, int index, int value)
         node_inserted->next = prev_node->next;
         prev_node->next=node_inserted;
     }
+}
+
+/* 获取列表中指定索引对应的node */
+node_t *list_find(list_t *list, int value)
+{
+    node_t *node = list->next;
+    while (node) {
+        if (node->value == value) {
+            break;
+        }
+        node = node ->next;
+    }
+    return node;
 }
 
 
@@ -240,18 +261,27 @@ void list_sort(list_t *list)
 int main(int argc, char **argv)
 {
 
-    int i;
+    int i, length;
     list_t *ids;
-    int values[argc-1];
+    node_t *id_node;
 
-    printf("Usage: %s int int int ...\n", argv[0]);
-    for (i = 1; i < argc; i++) {
-        values[i-1] = atoi(argv[i]);
+    ids =  list_init_head();
+
+    length = 1000 * 1000;
+
+
+    /* printf("Usage: %s int int int ...\n", argv[0]); */
+    for (i = 0; i < length; i++) {
+        list_append(ids, i);
     }
 
-    ids = list_init(values, (sizeof(values) / sizeof(values[0])));
-    print_list(ids);
-    printf("The length of list is: %d\n", list_len(ids));
+    for (i = 1; i < length; i++) {
+        id_node = list_find(ids, i);
+        if (id_node) {
+            printf("%d\n", id_node->value);
+        }
+    }
+
     free_list(ids);
     exit(0);
 }

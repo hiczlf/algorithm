@@ -140,6 +140,23 @@ struct avl_node_t *find_max(struct avl_node_t *avl_node)
     return avl_node;
 }
 
+struct avl_node_t *find(struct avl_node_t *avl_node, avl_element_t value)
+{
+    if (avl_node == NULL) {
+        return NULL;
+    }
+    while (avl_node) {
+        if (avl_node->element < value) {
+            avl_node = avl_node->right;
+        } else if (avl_node->element > value) {
+            avl_node = avl_node->left;
+        } else {
+            break;
+        }
+    }
+    return avl_node;
+}
+
 /* 删除一个节点, 貌似比插入麻烦 */
 struct avl_node_t *delete(struct avl_node_t *avl_node, int value) {
     struct avl_node_t *tmp_node;
@@ -179,31 +196,16 @@ void avl_free(struct avl_node_t *avl_node) {
 }
 
 int main(void) {
-    struct avl_node_t *min, *max;
-    struct avl_node_t *avl_tree= NULL;
-    avl_tree = insert(6, avl_tree);
-    avl_tree = insert(5, avl_tree);
-    avl_tree = insert(4, avl_tree);
-    avl_tree = insert(3, avl_tree);
-    avl_tree = insert(2, avl_tree);
-    avl_tree = insert(1, avl_tree);
-    avl_tree = insert(8, avl_tree);
-    avl_tree = insert(9, avl_tree);
-    avl_tree = insert(10, avl_tree);
-    avl_tree = insert(11, avl_tree);
-    avl_tree = insert(12, avl_tree);
-        avl_tree = insert(1, avl_tree);
-    avl_print(avl_tree);
-    min = find_min(avl_tree);
-    printf("min: %d\n", min->element);
-    max = find_max(avl_tree);
-    printf("max: %d\n", max->element);
-    avl_tree = delete(avl_tree, 12);
-    avl_tree = delete(avl_tree, 11);
-    /* delete(avl_tree, 10); */
-    avl_tree = delete(avl_tree, 9);
-    avl_tree = delete(avl_tree, 1);
-    avl_tree = delete(avl_tree, 5);
-    avl_print(avl_tree);
+    struct avl_node_t *avl_tree = NULL;
+    struct avl_node_t *avl_node;
+    int length = 1000 * 10000;
+    for (int i = 0; i < length; i++) {
+        avl_tree = insert(i, avl_tree);
+    }
+
+    for (int i = 0; i < length; i++) {
+        avl_node= find(avl_tree, i);
+        printf("%d\n", avl_node->element);
+    }
     avl_free(avl_tree);
 }
