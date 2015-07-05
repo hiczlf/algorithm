@@ -205,7 +205,6 @@ int main(void) {
 
     for (int i = 0; i < length; i++) {
         avl_node= find(avl_tree, i);
-        printf("%d\n", avl_node->element);
     }
     avl_free(avl_tree);
 }
